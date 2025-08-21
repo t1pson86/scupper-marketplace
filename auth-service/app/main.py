@@ -13,6 +13,7 @@ app.include_router(
     router=router
 )
 
+
 async def create_db():
     async with db_session.engin.begin() as conn:
         await conn.run_sync(

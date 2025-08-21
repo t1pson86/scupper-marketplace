@@ -1,10 +1,12 @@
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
+from typing import Optional
 
 from .base_repository import BaseRepository
 from database import get_new_async_session
 from schemas import UserCreate, UserResponse
 from services import UsersService
+from models import UsersModel
 
 class UserRepository(BaseRepository[UserCreate]):
     
@@ -27,10 +29,12 @@ class UserRepository(BaseRepository[UserCreate]):
         
     async def read(
         self, 
-        id: int
-    ):
+        email: str
+    ) -> Optional[UsersModel]:
         
-        return 'ok'
+        return await self.users_service.get_user_by_email(
+            email=email
+        )
         
 
     async def update(

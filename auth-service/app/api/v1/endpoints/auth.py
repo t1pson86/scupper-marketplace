@@ -1,12 +1,16 @@
 from fastapi import APIRouter, Depends
+from fastapi.security import OAuth2PasswordRequestForm
 
-from schemas import UserCreate, UserResponse
+from schemas import UserCreate, UserResponse, TokenBase
 from repositories import UserRepository
+from services import AuthService
+
 
 router = APIRouter()
 
-@router.post('/users', response_model=UserResponse)
-async def add_user(
+
+@router.post('/register')
+async def register(
     user: UserCreate,
     users_repo: UserRepository = Depends()
 ) -> UserResponse:
@@ -14,3 +18,21 @@ async def add_user(
     return await users_repo.create(
         user=user
     )
+
+
+@router.post('/login')
+async def login(
+    form_data: OAuth2PasswordRequestForm = Depends(),
+    auth_service: AuthService = Depends()
+) -> TokenBase:
+    
+    existing_user = await auth_service.authenticate_user(
+        email=form_data.username,
+        password=form_data.password
+    )
+
+    jwt_data = await auth_service.create_tokens(
+        user_id=existing_user.id
+    )
+
+    return jwt_data

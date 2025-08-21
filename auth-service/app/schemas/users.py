@@ -1,22 +1,38 @@
+import re
 from datetime import datetime
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, Field, field_validator
 
 
 class UserBase(BaseModel):
-    username: str
+    username: str = Field(min_length=3, max_length=50, pattern=r'^[a-zA-Z0-9_]+$')
     email: EmailStr
 
 
 class UserCreate(UserBase):
-    password: str
+    password: str = Field(min_length=8, max_length=100)
+
+    @field_validator('password')
+    @classmethod
+    def validate_password(cls, v):
+        if len(v) < 8:
+            raise ValueError('Password must be at least 8 characters long')
+        
+        if not re.search(r'\d', v):
+            raise ValueError('Password must contain at least one digit')
+        
+        if not re.search(r'[a-zA-Z]', v):
+            raise ValueError('Password must contain at least one letter')
+        
+        if re.search(r'[<>{}|\\?!-+="]', v):
+            raise ValueError('Password contains invalid characters')
+            
+        return v
 
 
 class UserResponse(BaseModel):
     id: int
     username: str
     email: EmailStr
-    is_active: bool
-    is_superuser: bool
     created_at: datetime
     updated_at: datetime
 

@@ -1,21 +1,25 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, update, delete
 from fastapi import HTTPException, status
+from typing import Optional
 
-from schemas import UserCreate
+from schemas import UserCreate, UserResponse
 from models import UsersModel
 from core import jwt_ver
 
 class UsersService:
 
-    def __init__(self, session: AsyncSession):
+    def __init__(
+        self, 
+        session: AsyncSession
+    ):
         self.session = session
 
 
     async def add_user(
         self,
         user: UserCreate
-    ):
+    ) -> UserResponse:
         username_result = await self.session.execute(
             select(UsersModel)
             .where(UsersModel.username==user.username)
@@ -24,7 +28,7 @@ class UsersService:
         existing_username = username_result.scalars().first()
 
         if existing_username:
-            return HTTPException(
+            raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Username already taken"
             )
@@ -37,7 +41,7 @@ class UsersService:
         existing_email = email_result.scalars().first()
 
         if existing_email:
-            return HTTPException(
+            raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Email already registered"
             )
@@ -54,3 +58,15 @@ class UsersService:
         await self.session.commit()
 
         return new_user
+    
+
+    async def get_user_by_email(
+        self,
+        email: str
+    ) -> Optional[UsersModel]:
+        existing_email = await self.session.execute(
+            select(UsersModel)
+            .where(UsersModel.email==email)
+        )
+
+        return existing_email.scalars().first()

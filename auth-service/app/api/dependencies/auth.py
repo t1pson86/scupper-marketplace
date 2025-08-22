@@ -1,19 +1,21 @@
 from fastapi import HTTPException, Depends, status, Request, Response
 from fastapi.security import OAuth2
 from sqlalchemy.ext.asyncio import AsyncSession
-from jose import JWTError
 
 from database import get_new_async_session
-from core import jwt_ver, jwt_settings
+from core import jwt_ver
 from services import CookieService
+from repositories import UserRepository
+from schemas import UserResponse
 
 
 class Oauth2CookieBearer(OAuth2):
 
-    def __call__(
+    async def __call__(
         self, 
         request: Request, 
-        response: Response
+        response: Response,
+        session: AsyncSession = Depends(get_new_async_session)
     ):
         access_token = request.cookies.get("access_token")
         refresh_token = request.cookies.get("refresh_token")
@@ -26,6 +28,20 @@ class Oauth2CookieBearer(OAuth2):
         
         jwt_payload = jwt_ver.decode_token(
             token = refresh_token
+        )
+
+        if jwt_payload.sub is None:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Could not validate credentials"
+            )
+        
+        users_repo = UserRepository(
+            session=session
+        )
+
+        current_user = await users_repo.read(
+            id = int(jwt_payload.sub)
         )
 
         new_access_token = jwt_ver.create_access_token(
@@ -41,27 +57,31 @@ class Oauth2CookieBearer(OAuth2):
             access_token=new_access_token
         )
         
-        return new_access_token
+        return current_user
 
 Oauth2Cookie_scheme = Oauth2CookieBearer()
 
 
 
 async def get_current_user(
-    session: AsyncSession = Depends(get_new_async_session),
-    token: str = Depends(Oauth2Cookie_scheme)
-):
-    jwt_payload = jwt_ver.decode_token(
-        token
-    )
-    # if payload.sub is None: разкомитить
-    #     raise ...
+    user: UserResponse = Depends(Oauth2Cookie_scheme)
+) -> UserResponse:
     
-    user_repo = UserRepository(
-        session=session
+    return user
+
+
+async def logout_current_user(
+    request: Request,
+    response: Response,
+    user: UserResponse = Depends(Oauth2Cookie_scheme)
+):
+    cookies_service = CookieService(
+        request=request,
+        response=response
     )
-    current_user = await user_repo.read(
-        id = int(payload.sub)
-    )
-    return current_user
+
+    cookies_service.delete_tokens()
+
+    return True
+
     

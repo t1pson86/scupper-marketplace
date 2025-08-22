@@ -29,11 +29,11 @@ class UserRepository(BaseRepository[UserCreate]):
         
     async def read(
         self, 
-        email: str
+        id: int
     ) -> Optional[UsersModel]:
         
-        return await self.users_service.get_user_by_email(
-            email=email
+        return await self.users_service.get_user_by_id(
+            id=id
         )
         
 

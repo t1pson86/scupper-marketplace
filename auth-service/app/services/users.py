@@ -64,9 +64,45 @@ class UsersService:
         self,
         email: str
     ) -> Optional[UsersModel]:
+        
         existing_email = await self.session.execute(
             select(UsersModel)
             .where(UsersModel.email==email)
         )
 
-        return existing_email.scalars().first()
+        result = existing_email.scalars().first()
+
+        if not result:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="The user is not registered"
+            )
+        
+        return result
+    
+
+    async def get_user_by_id(
+        self,
+        id: int
+    ) -> Optional[UsersModel]:
+        
+        existing_user = await self.session.execute(
+            select(UsersModel)
+            .where(UsersModel.id==id)
+        )
+
+        result = existing_user.scalars().first()
+
+        if not result:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="The user was not found"
+            )
+        
+        if not result.is_active:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST, 
+                detail="Inactive user"
+            )
+        
+        return result

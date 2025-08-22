@@ -54,3 +54,18 @@ class CookieService:
             samesite="lax"
         )
         return True
+    
+
+    def delete_tokens(self):
+        if self.request.cookies.get(
+            "access_token"
+        ):
+            self.response.delete_cookie(
+                "access_token"
+            )
+            
+        self.response.delete_cookie(
+            "refresh_token"
+        )
+
+        return True

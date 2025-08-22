@@ -34,26 +34,15 @@ class AuthService:
         email: str, 
         password: str
     ) -> UsersModel:
+        
         existing_user = await self.users_service.get_user_by_email(
             email=email
         )
 
-        if not existing_user:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="The user is not registered"
-            )
-        
         password_ver = jwt_ver.get_verify_password(
             plain_password=password,
             hashed_password=existing_user.hashed_password
         )
-
-        if not existing_user.is_active:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST, 
-                detail="Inactive user"
-            )
         
         return existing_user
         

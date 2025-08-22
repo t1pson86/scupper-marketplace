@@ -4,6 +4,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from schemas import UserCreate, UserResponse, TokenBase
 from repositories import UserRepository
 from services import AuthService
+from ...dependencies import logout_current_user
 
 
 router = APIRouter()
@@ -36,3 +37,10 @@ async def login(
     )
 
     return jwt_data
+
+@router.post("/logout")
+async def logout(
+    del_tokens: bool = Depends(logout_current_user)
+):
+    
+    return {"message": "Logout is True"}

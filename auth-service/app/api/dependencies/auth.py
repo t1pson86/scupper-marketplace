@@ -20,6 +20,12 @@ class Oauth2CookieBearer(OAuth2):
         access_token = request.cookies.get("access_token")
         refresh_token = request.cookies.get("refresh_token")
 
+        if access_token is None:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="The user is not logged in"
+            )
+        
         if refresh_token is None:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
@@ -27,7 +33,7 @@ class Oauth2CookieBearer(OAuth2):
             )
         
         jwt_payload = jwt_ver.decode_token(
-            token = refresh_token
+            token = access_token
         )
 
         if jwt_payload.sub is None:
@@ -83,5 +89,4 @@ async def logout_current_user(
     cookies_service.delete_tokens()
 
     return True
-
     

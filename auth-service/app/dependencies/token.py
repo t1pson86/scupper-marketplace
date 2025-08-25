@@ -6,6 +6,7 @@ from core import jwt_ver
 from repositories import UserRepository
 from database import get_new_async_session
 from services import CookieService
+from schemas import UserResponse
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
@@ -17,7 +18,7 @@ class TokenDep:
         response: Response,
         session: AsyncSession = Depends(get_new_async_session),
         token: str = Depends(oauth2_scheme)
-    ):
+    ) -> UserResponse:
 
         jwt_payload = jwt_ver.decode_token(
             token = token

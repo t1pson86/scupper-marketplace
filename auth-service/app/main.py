@@ -2,7 +2,8 @@ import uvicorn
 import asyncio
 from fastapi import FastAPI
 
-from api import router
+from api.routers import auth_router
+from api_clients.routers import client_router
 from database import db_session, Base
 
 app = FastAPI(
@@ -10,7 +11,11 @@ app = FastAPI(
 )
 
 app.include_router(
-    router=router
+    router=auth_router
+)
+
+app.include_router(
+    router=client_router
 )
 
 

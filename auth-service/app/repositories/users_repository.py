@@ -30,7 +30,7 @@ class UserRepository(BaseRepository[UserCreate]):
     async def read(
         self, 
         id: int
-    ) -> Optional[UsersModel]:
+    ) -> UsersModel:
         
         return await self.users_service.get_user_by_id(
             id=id

@@ -84,7 +84,7 @@ class UsersService:
     async def get_user_by_id(
         self,
         id: int
-    ) -> Optional[UsersModel]:
+    ) -> UsersModel:
         
         existing_user = await self.session.execute(
             select(UsersModel)

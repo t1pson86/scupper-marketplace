@@ -4,7 +4,8 @@ from fastapi.security import OAuth2PasswordRequestForm
 from schemas import UserCreate, UserResponse, TokenBase
 from repositories import UserRepository
 from services import AuthService
-from ...dependencies import logout_current_user, TokenDep
+
+from dependencies import logout_current_user
 
 
 router = APIRouter()
@@ -47,9 +48,3 @@ async def logout(
     return {"message": "Logout is True"}
 
 
-@router.get('')
-async def user_verification(
-    current_user: TokenDep = Depends(TokenDep)
-) -> UserResponse:
-    
-    return current_user

@@ -1,9 +1,13 @@
 from fastapi import APIRouter
 
-from .v1.endpoints import users
+from .v1.endpoints import advertisement
 
-router = APIRouter()
+router = APIRouter(
+    prefix="/api/v1",
+    tags=["Main Service"]
+)
 
 router.include_router(
-    router=users.router
+    router=advertisement.router,
+    prefix='/all_users'
 )

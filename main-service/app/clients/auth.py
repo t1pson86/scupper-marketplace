@@ -21,7 +21,7 @@ class AuthClient:
         try:
             async with aiohttp.ClientSession() as http_session:
                 async with http_session.get(
-                    "http://127.0.0.1:8000/api/v1/auth",
+                    "http://127.0.0.1:8000/api_client/v1/users",
                     headers=headers,
                     timeout=5
                 ) as response:

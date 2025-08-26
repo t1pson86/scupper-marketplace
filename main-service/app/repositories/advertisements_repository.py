@@ -1,0 +1,51 @@
+from fastapi import Depends
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from .base_repository import BaseRepository
+from database import get_new_async_session
+from schemas import AdvertisementCreate, AdvertisementResponse
+from services import AdvertisementsService
+
+class AdvertisementRepository(BaseRepository[AdvertisementCreate]):
+    
+    def __init__(self, session: AsyncSession = Depends(get_new_async_session)):
+        super().__init__(session)
+        self.advertisements_service = AdvertisementsService(
+            session=self.session
+        )
+
+
+    async def create(
+        self, 
+        advertisement: AdvertisementCreate,
+        user_id: int
+    ) -> AdvertisementResponse:
+        
+        return await self.advertisements_service.add_advertisement(
+            advertisement=advertisement,
+            user_id=user_id
+        )
+        
+        
+    async def read(
+        self, 
+        id: int
+    ):
+        
+        return 'ok'
+        
+
+    async def update(
+        self, 
+        user
+    ):
+        
+        return 'ok'
+    
+    
+    async def delete(
+        self, 
+        id
+    ):
+        
+        return 'ok'

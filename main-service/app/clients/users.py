@@ -1,7 +1,7 @@
 import aiohttp
 from fastapi import HTTPException, status, Request
 
-class AuthClient:
+class UsersClient:
     
     async def verify_token(
         self,

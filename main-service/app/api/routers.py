@@ -9,5 +9,5 @@ router = APIRouter(
 
 router.include_router(
     router=advertisement.router,
-    prefix='/all_users'
+    prefix='/advertisements'
 )

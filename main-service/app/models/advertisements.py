@@ -9,7 +9,6 @@ from database import Base
 class CategoryEnum(str, Enum):
     ELECTRONICS = "electronics"
     CLOTHES = "clothes"
-    CLOTHING = "clothing"
     FOOD = "food"
     OTHER = "other"
 

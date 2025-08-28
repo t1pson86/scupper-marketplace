@@ -20,3 +20,17 @@ async def create_advertisement(
     )
 
 
+@router.post('/del')
+async def delete_advertisement(
+    advertisement_id: str,
+    user_data: UserResponse = Depends(auth_client.verify_token),
+    advertisements_repository: AdvertisementRepository = Depends()
+) -> dict:
+    
+    await advertisements_repository.delete(
+        uniq_id=advertisement_id
+    )
+
+    return {"Delete": True}
+
+

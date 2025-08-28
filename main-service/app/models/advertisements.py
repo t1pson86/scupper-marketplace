@@ -1,7 +1,7 @@
 from sqlalchemy import text
 from enum import Enum
 from datetime import datetime
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from database import Base
 
@@ -27,3 +27,9 @@ class AdvertisementsModel(Base):
     updated_at: Mapped[datetime] = mapped_column(nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     creator_id: Mapped[int] = mapped_column(nullable=False)
+
+    reviews: Mapped[list["ReviewsModel"]] = relationship(
+        "ReviewsModel", 
+        back_populates="advertisement",
+        cascade="all, delete-orphan"
+    )

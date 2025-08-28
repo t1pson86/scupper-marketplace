@@ -15,6 +15,7 @@ class AdvertisementCreate(BaseModel):
 
 class AdvertisementResponse(BaseModel):
     id: int
+    uniq_id: str
     name: str
     description: str
     price: int

@@ -20,6 +20,15 @@ async def create_advertisement(
     )
 
 
+
+@router.get('')
+async def get_all_advertisment(
+    user_data: UserResponse = Depends(auth_client.verify_token)
+):
+    pass
+
+
+
 @router.post('/del')
 async def delete_advertisement(
     advertisement_id: str,

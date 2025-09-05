@@ -1,9 +1,10 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, update, delete
+from sqlalchemy import select, update, delete, func
 from fastapi import HTTPException, status
 
 from schemas import AdvertisementCreate
 from models import AdvertisementsModel
+from typing import Tuple, List
 
 
 class AdvertisementsService:
@@ -33,6 +34,30 @@ class AdvertisementsService:
         await self.session.commit()
 
         return new_advertisement
+    
+
+    async def get_advertisments(
+        self,
+        skip: int = 0, 
+        limit: int = 15
+    ) -> Tuple[List[AdvertisementsModel], int]:
+        advertisments = await self.session.execute(
+            select(AdvertisementsModel)
+            .order_by(AdvertisementsModel.created_at.desc())
+            .offset(skip)
+            .limit(limit)
+            )
+        
+        result = advertisments.scalars().all()
+
+        count_result = await self.session.execute(
+            select(func.count(AdvertisementsModel.id))
+        )
+
+        total_count = count_result.scalar_one()
+        
+        return result, total_count
+
     
 
     async def delete_advertisement(

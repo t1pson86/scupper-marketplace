@@ -1,7 +1,8 @@
-from fastapi import APIRouter, Depends
+import math
+from fastapi import APIRouter, Depends, Query
 
 from clients import auth_client
-from schemas import AdvertisementCreate, AdvertisementResponse, UserResponse
+from schemas import AdvertisementCreate, AdvertisementResponse, UserResponse, PaginatedResponse, AdvertisementPaginationResponse
 from repositories import AdvertisementRepository
 
 router = APIRouter()
@@ -23,9 +24,40 @@ async def create_advertisement(
 
 @router.get('')
 async def get_all_advertisment(
-    user_data: UserResponse = Depends(auth_client.verify_token)
-):
-    pass
+    user_data: UserResponse = Depends(auth_client.verify_token),
+    advertisements_repository: AdvertisementRepository = Depends(),
+    page: int = Query(1, ge=1, description="Номер страницы"),
+    limit: int = Query(15, ge=1, le=100, description="Элементов на странице"),
+) -> PaginatedResponse:
+    
+    skip = (page - 1) * limit
+    
+    advertisements, total_count = await advertisements_repository.get_all(
+        skip=skip, 
+        limit=limit
+        )
+    
+    # Вычисляем общее количество страниц
+    total_pages = math.ceil(total_count / limit) if total_count > 0 else 1
+
+    advertisement_schemas = [
+        AdvertisementPaginationResponse(
+            id=ad.id,
+            name=ad.name,
+            description=ad.description,
+            price=ad.price,
+            category=ad.category,
+            creator_id=ad.creator_id
+        ) for ad in advertisements
+    ]
+    
+    return PaginatedResponse(
+        total_count=total_count,
+        total_pages=total_pages,
+        current_page=page,
+        items_per_page=limit,
+        items=advertisement_schemas
+    )
 
 
 

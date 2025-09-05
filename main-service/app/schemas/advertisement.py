@@ -23,3 +23,12 @@ class AdvertisementResponse(BaseModel):
     creator_id: int
 
 
+class AdvertisementPaginationResponse(BaseModel):
+    id: int
+    name: str
+    description: str
+    price: int
+    category: str
+    creator_id: int
+
+

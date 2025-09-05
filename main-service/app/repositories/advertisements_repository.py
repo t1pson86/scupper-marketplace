@@ -5,6 +5,8 @@ from .base_repository import BaseRepository
 from database import get_new_async_session
 from schemas import AdvertisementCreate, AdvertisementResponse
 from services import AdvertisementsService
+from models import AdvertisementsModel
+from typing import Tuple, List
 
 class AdvertisementRepository(BaseRepository[AdvertisementCreate]):
     
@@ -50,4 +52,15 @@ class AdvertisementRepository(BaseRepository[AdvertisementCreate]):
         
         return await self.advertisements_service.delete_advertisement(
             advertisement_id=uniq_id
+        )
+    
+    async def get_all(
+        self,
+        skip: int = 0, 
+        limit: int = 15
+    ) -> Tuple[List[AdvertisementsModel], int]:
+        
+        return await self.advertisements_service.get_advertisments(
+            skip=skip, 
+            limit=limit
         )

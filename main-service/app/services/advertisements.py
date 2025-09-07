@@ -62,7 +62,8 @@ class AdvertisementsService:
 
     async def delete_advertisement(
         self,
-        advertisement_id: str
+        advertisement_id: str,
+        user_id: int
     ) -> None:
         
         current_advertisement = await self.session.execute(
@@ -76,6 +77,12 @@ class AdvertisementsService:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="This advertisement not found"
+            )
+        
+        if result.creator_id != user_id:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="You cannot delete this ad because you are not its creator."
             )
         
         await self.session.delete(result)

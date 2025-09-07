@@ -37,7 +37,6 @@ async def get_all_advertisment(
         limit=limit
         )
     
-    # Вычисляем общее количество страниц
     total_pages = math.ceil(total_count / limit) if total_count > 0 else 1
 
     advertisement_schemas = [
@@ -69,7 +68,8 @@ async def delete_advertisement(
 ) -> dict:
     
     await advertisements_repository.delete(
-        uniq_id=advertisement_id
+        uniq_id=advertisement_id,
+        user_id=user_data["id"]
     )
 
     return {"Delete": True}

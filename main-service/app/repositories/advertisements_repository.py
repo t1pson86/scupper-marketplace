@@ -47,12 +47,15 @@ class AdvertisementRepository(BaseRepository[AdvertisementCreate]):
     
     async def delete(
         self, 
-        uniq_id: str
+        uniq_id: str,
+        user_id: int
     ):
         
         return await self.advertisements_service.delete_advertisement(
-            advertisement_id=uniq_id
+            advertisement_id=uniq_id,
+            user_id=user_id
         )
+    
     
     async def get_all(
         self,

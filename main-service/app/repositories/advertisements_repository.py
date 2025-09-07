@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from .base_repository import BaseRepository
 from database import get_new_async_session
-from schemas import AdvertisementCreate, AdvertisementResponse
+from schemas import AdvertisementCreate, AdvertisementResponse, AdvertisementUpdate
 from services import AdvertisementsService
 from models import AdvertisementsModel
 from typing import Tuple, List
@@ -39,10 +39,16 @@ class AdvertisementRepository(BaseRepository[AdvertisementCreate]):
 
     async def update(
         self, 
-        user
-    ):
+        user_id: int,
+        advertisment_id: str,
+        update_data: AdvertisementUpdate
+    ) -> dict:
         
-        return 'ok'
+        return await self.advertisements_service.update_advertisment(
+            user_id=user_id,
+            advertisment_id=advertisment_id,
+            update_data=update_data
+        )
     
     
     async def delete(

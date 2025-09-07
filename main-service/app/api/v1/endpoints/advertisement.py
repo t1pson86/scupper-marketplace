@@ -2,7 +2,7 @@ import math
 from fastapi import APIRouter, Depends, Query
 
 from clients import auth_client
-from schemas import AdvertisementCreate, AdvertisementResponse, UserResponse, PaginatedResponse, AdvertisementPaginationResponse
+from schemas import AdvertisementCreate, AdvertisementResponse, UserResponse, PaginatedResponse, AdvertisementPaginationResponse, AdvertisementUpdate
 from repositories import AdvertisementRepository
 
 router = APIRouter()
@@ -60,7 +60,22 @@ async def get_all_advertisment(
 
 
 
-@router.post('/del')
+@router.put('/update')
+async def delete_advertisement(
+    advertisment_id: str,
+    update_data: AdvertisementUpdate,
+    user_data: UserResponse = Depends(auth_client.verify_token),
+    advertisements_repository: AdvertisementRepository = Depends()
+) -> dict:
+    
+    return await advertisements_repository.update(
+        user_id=user_data["id"],
+        advertisment_id=advertisment_id,
+        update_data=update_data
+    )
+
+
+@router.delete('/del')
 async def delete_advertisement(
     advertisement_id: str,
     user_data: UserResponse = Depends(auth_client.verify_token),

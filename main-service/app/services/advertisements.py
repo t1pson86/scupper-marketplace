@@ -2,7 +2,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, update, delete, func
 from fastapi import HTTPException, status
 
-from schemas import AdvertisementCreate
+from schemas import AdvertisementCreate, AdvertisementUpdate
 from models import AdvertisementsModel
 from typing import Tuple, List
 
@@ -57,6 +57,45 @@ class AdvertisementsService:
         total_count = count_result.scalar_one()
         
         return result, total_count
+    
+
+    async def update_advertisment(
+        self,
+        user_id: int,
+        advertisment_id: str,
+        update_data: AdvertisementUpdate
+    ) -> dict:
+        
+        current_advertisment = await self.session.execute(
+            select(AdvertisementsModel)
+            .where(AdvertisementsModel.uniq_id==advertisment_id)
+        )
+
+        result = current_advertisment.scalars().first()
+
+        if result is None:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="The advertisment with this id was not found."
+            )
+        
+        if result.creator_id != user_id:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="You are not the creator of this ad."
+            )
+        
+        update_dict = update_data.dict(exclude_unset=True)
+        
+        updt_advertisment = await self.session.execute(
+            update(AdvertisementsModel)
+            .where(AdvertisementsModel.uniq_id==advertisment_id)
+            .values(update_dict)
+        )
+
+        await self.session.commit()
+
+        return {"update": True}
 
     
 

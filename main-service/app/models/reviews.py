@@ -20,3 +20,4 @@ class ReviewsModel(Base):
         "AdvertisementsModel", 
         back_populates="reviews"
     )
+    

@@ -45,4 +45,4 @@ class UsersClient:
                 detail="Auth service unavailable"
             )
 
-auth_client = AuthClient()
+auth_client = UsersClient()

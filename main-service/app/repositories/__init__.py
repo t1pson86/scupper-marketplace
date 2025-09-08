@@ -1,1 +1,2 @@
 from .advertisements_repository import AdvertisementRepository
+from .reviews_repository import ReviewsRepository

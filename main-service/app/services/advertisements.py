@@ -1,5 +1,6 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, update, delete, func
+from sqlalchemy.orm import selectinload
 from fastapi import HTTPException, status
 
 from schemas import AdvertisementCreate, AdvertisementUpdate
@@ -41,6 +42,7 @@ class AdvertisementsService:
         skip: int = 0, 
         limit: int = 15
     ) -> Tuple[List[AdvertisementsModel], int]:
+        
         advertisments = await self.session.execute(
             select(AdvertisementsModel)
             .order_by(AdvertisementsModel.created_at.desc())
@@ -57,6 +59,28 @@ class AdvertisementsService:
         total_count = count_result.scalar_one()
         
         return result, total_count
+    
+
+    async def get_advertisment(
+        self,
+        advertisement_id: int
+    ) -> AdvertisementsModel:
+        
+        current_advertisment = await self.session.execute(
+            select(AdvertisementsModel)
+            .options(selectinload(AdvertisementsModel.reviews))
+            .where(AdvertisementsModel.id==advertisement_id)
+            )
+        
+        result = current_advertisment.scalars().first()
+
+        if result is None:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND(),
+                detail="This ID is not dound"
+            )
+        
+        return result
     
 
     async def update_advertisment(

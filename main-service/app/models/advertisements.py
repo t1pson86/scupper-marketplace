@@ -31,5 +31,6 @@ class AdvertisementsModel(Base):
     reviews: Mapped[list["ReviewsModel"]] = relationship(
         "ReviewsModel", 
         back_populates="advertisement",
-        cascade="all, delete-orphan"
+        cascade="all, delete-orphan",
+        lazy="selectin"
     )

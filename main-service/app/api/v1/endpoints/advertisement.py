@@ -2,7 +2,7 @@ import math
 from fastapi import APIRouter, Depends, Query
 
 from clients import auth_client
-from schemas import AdvertisementCreate, AdvertisementResponse, UserResponse, PaginatedResponse, AdvertisementPaginationResponse, AdvertisementUpdate
+from schemas import AdvertisementCreate, AdvertisementReviewResponse, AdvertisementResponse, UserResponse, PaginatedResponse, AdvertisementPaginationResponse, AdvertisementUpdate
 from repositories import AdvertisementRepository
 
 router = APIRouter()
@@ -21,9 +21,21 @@ async def create_advertisement(
     )
 
 
+@router.get('/{advertisement_id}')
+async def get_advertisement(
+    advertisement_id: int,
+    user_data: UserResponse = Depends(auth_client.verify_token),
+    advertisements_repository: AdvertisementRepository = Depends()
+) -> AdvertisementReviewResponse:
+    
+    return await advertisements_repository.read(
+        advertisement_id=advertisement_id
+    )
+
+
 
 @router.get('')
-async def get_all_advertisment(
+async def get_all_advertisments(
     user_data: UserResponse = Depends(auth_client.verify_token),
     advertisements_repository: AdvertisementRepository = Depends(),
     page: int = Query(1, ge=1, description="Номер страницы"),

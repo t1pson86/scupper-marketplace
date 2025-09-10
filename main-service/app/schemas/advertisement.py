@@ -1,7 +1,8 @@
 from pydantic import BaseModel, Field
 
 from models import CategoryEnum
-from typing import Optional
+from typing import Optional, List
+from .reviews import ReviewResponse
 
 
 class AdvertisementCreate(BaseModel):
@@ -39,4 +40,13 @@ class AdvertisementPaginationResponse(BaseModel):
     category: str
     creator_id: int
 
+
+class AdvertisementReviewResponse(BaseModel):
+    id: int
+    name: str
+    description: str
+    price: int
+    category: str
+    creator_id: int
+    reviews: List[ReviewResponse]
 

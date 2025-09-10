@@ -1,7 +1,6 @@
 from pydantic import BaseModel, Field
 
 from typing import Optional
-from .advertisement import AdvertisementResponse
 
 
 class ReviewCreate(BaseModel):

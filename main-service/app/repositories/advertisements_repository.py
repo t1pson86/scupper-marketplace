@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from .base_repository import BaseRepository
 from database import get_new_async_session
-from schemas import AdvertisementCreate, AdvertisementResponse, AdvertisementUpdate
+from schemas import AdvertisementCreate, AdvertisementResponse, AdvertisementUpdate, AdvertisementReviewResponse
 from services import AdvertisementsService
 from models import AdvertisementsModel
 from typing import Tuple, List
@@ -31,10 +31,12 @@ class AdvertisementRepository(BaseRepository[AdvertisementCreate]):
         
     async def read(
         self, 
-        id: int
-    ):
+        advertisement_id: int
+    ) -> AdvertisementReviewResponse:
         
-        return 'ok'
+        return await self.advertisements_service.get_advertisment(
+            advertisement_id=advertisement_id
+        )
         
 
     async def update(

@@ -1,38 +1,24 @@
 import aiohttp
-from fastapi import HTTPException, status, Request
+from fastapi import HTTPException, status
+
+from schemas import UserResponse
 
 class UsersClient:
     
-    async def verify_token(
+    async def get_user(
         self,
-        request: Request
-    ):
-        cookies_token = request.cookies.get("access_token")
-
-        if cookies_token is None:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="The user is not logged in"
-            )
-        
-        headers = {"Authorization": f"Bearer {cookies_token}"}
-        
+        user_id: int
+    ) -> UserResponse:
+                
         try:
             async with aiohttp.ClientSession() as http_session:
                 async with http_session.get(
-                    "http://127.0.0.1:8000/api_client/v1/users",
-                    headers=headers,
-                    timeout=5
+                    f"http://127.0.0.1:8000/api_client/v1/users/{user_id}",
+                    timeout=10
                 ) as response:
                     
                     if response.status == 200:
                         return await response.json()
-
-                    if response.status == 401:
-                        raise HTTPException(
-                            status_code=status.HTTP_401_UNAUTHORIZED,
-                            detail="User not authorized"
-                        )
 
                     raise HTTPException(
                         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -45,4 +31,4 @@ class UsersClient:
                 detail="Auth service unavailable"
             )
 
-auth_client = UsersClient()
+users_client = UsersClient()

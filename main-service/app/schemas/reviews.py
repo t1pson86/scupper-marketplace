@@ -10,6 +10,7 @@ class ReviewCreate(BaseModel):
 
 
 class ReviewResponse(BaseModel):
+    id: int
     stars: int
     description: Optional[str]
     advertisement_id: int

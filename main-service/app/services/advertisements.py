@@ -76,8 +76,8 @@ class AdvertisementsService:
 
         if result is None:
             raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND(),
-                detail="This ID is not dound"
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="This ID is not found"
             )
         
         return result

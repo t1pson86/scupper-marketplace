@@ -7,6 +7,8 @@ class UserResponse(BaseModel):
     id: int
     username: str
     email: EmailStr
+    telegram_username: str
+    telegram_id: int
     created_at: datetime
     updated_at: datetime
 

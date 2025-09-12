@@ -1,10 +1,12 @@
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
+from typing import Tuple
 
 from .base_repository import BaseRepository
 from database import get_new_async_session
 from services import ReviewsService
 from schemas import ReviewCreate, ReviewResponse
+from models import ReviewsModel
 
 
 class ReviewsRepository(BaseRepository[ReviewCreate]):
@@ -19,7 +21,7 @@ class ReviewsRepository(BaseRepository[ReviewCreate]):
     async def create(
         self,
         review: ReviewCreate
-    ) -> ReviewResponse:
+    ) -> Tuple[ReviewsModel, int]:
         
         return await self.advertisements_service.add_review(
             review=review

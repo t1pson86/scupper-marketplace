@@ -1,6 +1,8 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, update, delete, func
+from sqlalchemy import select, update, delete
+from sqlalchemy.orm import selectinload
 from fastapi import HTTPException, status
+from typing import Tuple
 
 from schemas import ReviewCreate
 from models import AdvertisementsModel, ReviewsModel
@@ -18,7 +20,7 @@ class ReviewsService:
     async def add_review(
         self, 
         review: ReviewCreate
-    ) -> ReviewsModel:
+    ) -> Tuple[ReviewsModel, int]:
         
         current_advertisement = await self.session.execute(
             select(AdvertisementsModel)
@@ -40,4 +42,4 @@ class ReviewsService:
         self.session.add(new_review)
         await self.session.commit()
 
-        return new_review
+        return new_review, result.creator_id

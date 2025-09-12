@@ -1,5 +1,7 @@
 import math
+import json
 from fastapi import APIRouter, Depends, Query
+from faststream.rabbit.fastapi import RabbitRouter
 
 from clients import auth_client
 from schemas import AdvertisementCreate, AdvertisementReviewResponse, AdvertisementResponse, UserResponse, PaginatedResponse, AdvertisementPaginationResponse, AdvertisementUpdate
@@ -7,18 +9,42 @@ from repositories import AdvertisementRepository
 
 router = APIRouter()
 
+rabbit_router = RabbitRouter()
 
-@router.post('')
+
+@rabbit_router.post('')
 async def create_advertisement(
     advertisement: AdvertisementCreate,
     user_data: UserResponse = Depends(auth_client.verify_token),
     advertisements_repository: AdvertisementRepository = Depends()
 ) -> AdvertisementResponse:
     
-    return await advertisements_repository.create(
+    advertisement_data = await advertisements_repository.create(
         advertisement=advertisement,
         user_id=user_data["id"]
     )
+
+    broker_message = json.dumps(
+        {
+            "telegram_user_id": user_data["telegram_id"],
+            "telegram_message": f"""
+Вы успешно создали новое объявление!
+Название: {advertisement.name}
+Описание: {advertisement.description}
+Цена: {advertisement.price}
+
+С уважением, компания Scupper.
+"""
+        }
+    )
+
+    await rabbit_router.broker.publish(
+        message=broker_message,
+        queue="advertisements"
+    )
+
+    return advertisement_data
+
 
 
 @router.get('/{advertisement_id}')

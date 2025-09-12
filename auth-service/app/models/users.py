@@ -10,6 +10,8 @@ class UsersModel(Base):
     id: Mapped[int] = mapped_column(primary_key=True, nullable=False)
     username: Mapped[str] = mapped_column(nullable=False, unique=True)
     email: Mapped[str] = mapped_column(nullable=False, unique=True)
+    telegram_username: Mapped[str] = mapped_column(nullable=False, unique=True)
+    telegram_id: Mapped[int] = mapped_column(nullable=False, unique=True)
     hashed_password: Mapped[str] = mapped_column(nullable=False)
 
     is_active: Mapped[bool] = mapped_column(nullable=False, default=True)

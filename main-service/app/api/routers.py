@@ -8,12 +8,24 @@ router = APIRouter(
 
 router.include_router(
     router=advertisement.router,
-    tags=["Main Service Advertisement"],
+    tags=["Main Service Advertisements"],
+    prefix='/advertisements'
+)
+
+router.include_router(
+    router=advertisement.rabbit_router,
+    tags=["Main Service Advertisements RabbitMQ"],
     prefix='/advertisements'
 )
 
 router.include_router(
     router=reviews.router,
     tags=["Main Service Reviews"],
+    prefix='/reviews'
+)
+
+router.include_router(
+    router=reviews.rabbit_router,
+    tags=["Main Service Reviews RabbitMQ"],
     prefix='/reviews'
 )

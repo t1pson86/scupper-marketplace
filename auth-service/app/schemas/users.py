@@ -6,6 +6,8 @@ from pydantic import BaseModel, EmailStr, Field, field_validator
 class UserBase(BaseModel):
     username: str = Field(min_length=3, max_length=50, pattern=r'^[a-zA-Z0-9_]+$')
     email: EmailStr
+    telegram_username: str
+    telegram_id: int
 
 
 class UserCreate(UserBase):
@@ -33,6 +35,8 @@ class UserResponse(BaseModel):
     id: int
     username: str
     email: EmailStr
+    telegram_username: str
+    telegram_id: int
     created_at: datetime
     updated_at: datetime
 

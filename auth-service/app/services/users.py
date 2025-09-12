@@ -3,7 +3,7 @@ from sqlalchemy import select, update, delete
 from fastapi import HTTPException, status
 from typing import Optional
 
-from schemas import UserCreate, UserResponse
+from schemas import UserCreate
 from models import UsersModel
 from core import jwt_ver
 
@@ -19,7 +19,7 @@ class UsersService:
     async def add_user(
         self,
         user: UserCreate
-    ) -> UserResponse:
+    ) -> UsersModel:
         username_result = await self.session.execute(
             select(UsersModel)
             .where(UsersModel.username==user.username)
@@ -46,9 +46,37 @@ class UsersService:
                 detail="Email already registered"
             )
         
+        telegram_username_result = await self.session.execute(
+            select(UsersModel)
+            .where(UsersModel.telegram_username==user.telegram_username)
+        )
+
+        existing_telegram_username = telegram_username_result.scalars().first()
+
+        if existing_telegram_username:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Telegram already registered"
+            )
+        
+        telegram_id_result = await self.session.execute(
+            select(UsersModel)
+            .where(UsersModel.telegram_id==user.telegram_id)
+        )
+
+        existing_telegram_id = telegram_id_result.scalars().first()
+
+        if existing_telegram_id:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Telegram already registered"
+            )
+        
         new_user = UsersModel(
             username=user.username,
             email=user.email,
+            telegram_username=user.telegram_username,
+            telegram_id=user.telegram_id,
             hashed_password=jwt_ver.get_hash_password(
                 password=user.password
             )

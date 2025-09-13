@@ -80,7 +80,23 @@ async def logout_current_user(
     request: Request,
     response: Response,
     user: UserResponse = Depends(Oauth2Cookie_scheme)
-):
+) -> bool:
+    
+    cookies_service = CookieService(
+        request=request,
+        response=response
+    )
+
+    cookies_service.delete_tokens()
+
+    return True
+
+
+async def delete_current_user(
+    request: Request,
+    response: Response
+) -> bool:
+    
     cookies_service = CookieService(
         request=request,
         response=response

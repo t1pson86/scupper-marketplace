@@ -1,5 +1,8 @@
+import json
 from fastapi import APIRouter, Depends
 from fastapi.security import OAuth2PasswordRequestForm
+from faststream.rabbit.fastapi import RabbitRouter
+from datetime import datetime
 
 from schemas import UserCreate, UserResponse, TokenBase
 from repositories import UserRepository
@@ -9,6 +12,8 @@ from dependencies import logout_current_user
 
 
 router = APIRouter()
+
+rabbit_router = RabbitRouter()
 
 
 @router.post('/register')
@@ -22,7 +27,7 @@ async def register(
     )
 
 
-@router.post('/login')
+@rabbit_router.post('/login')
 async def login(
     form_data: OAuth2PasswordRequestForm = Depends(),
     auth_service: AuthService = Depends()
@@ -35,6 +40,21 @@ async def login(
 
     jwt_data = await auth_service.create_tokens(
         user_id=existing_user.id
+    )
+
+    broker_message = json.dumps(
+        {
+            "telegram_user_id": existing_user.telegram_id,
+            "telegram_message": f"""
+Выполнен вход в аккаунт {existing_user.username}
+- Время захода {datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')}
+"""
+        }
+    )
+
+    await rabbit_router.broker.publish(
+        message=broker_message,
+        queue="users_login"
     )
 
     return jwt_data

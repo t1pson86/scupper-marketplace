@@ -4,7 +4,7 @@ from typing import Optional
 
 from .base_repository import BaseRepository
 from database import get_new_async_session
-from schemas import UserCreate, UserResponse
+from schemas import UserCreate, UserResponse, UserUpdate
 from services import UsersService
 from models import UsersModel
 
@@ -39,15 +39,21 @@ class UserRepository(BaseRepository[UserCreate]):
 
     async def update(
         self, 
-        user
-    ):
+        user_id: int,
+        updt_user: UserUpdate
+    ) -> UsersModel:
         
-        return 'ok'
+        return await self.users_service.update_user(
+            user_id=user_id,
+            updt_user=updt_user
+        )
     
     
     async def delete(
         self, 
-        id
-    ):
+        user_id: int
+    ) -> None:
         
-        return 'ok'
+        return await self.users_service.delete_user(
+            user_id=user_id
+        )

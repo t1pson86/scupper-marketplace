@@ -17,3 +17,9 @@ auth_router.include_router(
     prefix="/users/data",
     tags=["Users Data"]
 )
+
+auth_router.include_router(
+    router=auth.rabbit_router,
+    prefix="/auth",
+    tags=["Auth Service"]
+)

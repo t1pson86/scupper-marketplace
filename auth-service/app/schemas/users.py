@@ -1,5 +1,6 @@
 import re
 from datetime import datetime
+from typing import Optional
 from pydantic import BaseModel, EmailStr, Field, field_validator
 
 
@@ -42,3 +43,10 @@ class UserResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class UserUpdate(BaseModel):
+    username: Optional[str] = None
+    email: Optional[EmailStr] = None
+    telegram_username: Optional[str] = None
+    telegram_id: Optional[int] = None

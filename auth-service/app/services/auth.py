@@ -5,7 +5,7 @@ from database import get_new_async_session
 from core import jwt_ver
 from models import UsersModel
 from .users import UsersService
-from schemas import TokenBase
+from schemas import TokenBase, UserResponse
 from .cookie import CookieService
 
 
@@ -33,7 +33,7 @@ class AuthService:
         self, 
         email: str, 
         password: str
-    ) -> UsersModel:
+    ) -> UserResponse:
         
         existing_user = await self.users_service.get_user_by_email(
             email=email

@@ -1,9 +1,12 @@
 import json
 from aiogram import Router, Bot
+from aiogram.types import Message
 from faststream.rabbit import RabbitBroker
 
+from core import bot_settings
 
-bot = Bot(token="8478036090:AAFIkAtd4COmhGGGYQLkDkwx-EnFGoW8__I")
+
+bot = Bot(token=bot_settings.bot_token)
 
 router = Router()
 

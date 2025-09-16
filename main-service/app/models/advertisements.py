@@ -25,7 +25,7 @@ class AdvertisementsModel(Base):
 
     created_at: Mapped[datetime] = mapped_column(nullable=False, default=datetime.utcnow)
     updated_at: Mapped[datetime] = mapped_column(nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
-
+    
     creator_id: Mapped[int] = mapped_column(nullable=False)
 
     reviews: Mapped[list["ReviewsModel"]] = relationship(
@@ -33,4 +33,10 @@ class AdvertisementsModel(Base):
         back_populates="advertisement",
         cascade="all, delete-orphan",
         lazy="selectin"
+    )
+
+    carts_advertisements: Mapped["CartsAdvertisementsModel"] = relationship(
+        "CartsAdvertisementsModel",
+        back_populates="advertisement",
+        cascade="all, delete-orphan"
     )

@@ -20,11 +20,13 @@ class ReviewsRepository(BaseRepository[ReviewCreate]):
 
     async def create(
         self,
-        review: ReviewCreate
+        review: ReviewCreate,
+        user_id: int
     ) -> Tuple[ReviewsModel, int]:
         
         return await self.advertisements_service.add_review(
-            review=review
+            review=review,
+            user_id=user_id
         )
         
     async def read(

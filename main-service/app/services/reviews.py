@@ -19,7 +19,8 @@ class ReviewsService:
 
     async def add_review(
         self, 
-        review: ReviewCreate
+        review: ReviewCreate,
+        user_id: int
     ) -> Tuple[ReviewsModel, int]:
         
         current_advertisement = await self.session.execute(
@@ -33,6 +34,12 @@ class ReviewsService:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="An ad with this ID was not found!"
+            )
+        
+        if result.creator_id == user_id:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="The creator cannot create a review for their product"
             )
         
         new_review = ReviewsModel(

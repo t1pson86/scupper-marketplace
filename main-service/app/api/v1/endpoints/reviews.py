@@ -13,12 +13,13 @@ rabbit_router = RabbitRouter()
 @rabbit_router.post('')
 async def create_review(
     review: ReviewCreate,
-    user_tokens: UserResponse = Depends(auth_client.verify_token),
+    user_data: UserResponse = Depends(auth_client.verify_token),
     reviws_repository: ReviewsRepository = Depends()
 ) -> ReviewResponse:
     
     review_data, creator_id = await reviws_repository.create(
-        review=review
+        review=review,
+        user_id=user_data.id ## ....
     )
 
     creator_data = await users_client.get_user(

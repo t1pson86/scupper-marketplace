@@ -17,11 +17,12 @@ async def create_cart(
         user_id=user_data["id"]
     )
 
+
 @router.post('/{advertisement_id}')
-async def create_cart(
+async def add_advertisement(
     advertisement_id: int,
     carts_repository: CartsRepository = Depends(),
-    user_data: UserResponse = Depends(auth_client.verify_token),
+    user_data: UserResponse = Depends(auth_client.verify_token)
 ) -> AssociativeResponse:
     
     return await carts_repository.add_to_cart(
@@ -29,4 +30,14 @@ async def create_cart(
         advertisement_id=advertisement_id
     )
 
+
+@router.delete('')
+async def delete_advertisement_on_cart(
+    carts_repository: CartsRepository = Depends(),
+    user_data: UserResponse = Depends(auth_client.verify_token)
+):
+    
+    return await carts_repository.delete(
+        ...
+    )
 

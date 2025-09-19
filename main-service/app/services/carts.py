@@ -89,4 +89,9 @@ class CartsService:
         return new_entry
         
 
+    async def delete_ad_on_cart(
+        self
+    ):
+        pass
+
 

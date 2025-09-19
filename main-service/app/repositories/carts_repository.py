@@ -42,7 +42,10 @@ class CartsRepository(BaseRepository[CartsResponse]):
     async def delete(
         self
     ):
-        pass
+        
+        return await self.carts_service.delete_ad_on_cart(
+            ...
+        )
 
     async def add_to_cart(
         self,

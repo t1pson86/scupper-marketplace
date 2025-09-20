@@ -40,12 +40,16 @@ class CartsRepository(BaseRepository[CartsResponse]):
     
     
     async def delete(
-        self
-    ):
+        self,
+        user_id: int,
+        advertisement_id: int
+    ) -> dict:
         
         return await self.carts_service.delete_ad_on_cart(
-            ...
+            user_id=user_id,
+            advertisement_id=advertisement_id
         )
+    
 
     async def add_to_cart(
         self,

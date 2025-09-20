@@ -18,6 +18,17 @@ async def create_cart(
     )
 
 
+@router.get('')
+async def get_cart(
+    carts_repository: CartsRepository = Depends(),
+    user_data: UserResponse = Depends(auth_client.verify_token),
+) -> CartsResponse:
+    
+    return await carts_repository.create(
+        user_id=user_data["id"]
+    )
+
+
 @router.post('/{advertisement_id}')
 async def add_advertisement(
     advertisement_id: int,
@@ -33,11 +44,13 @@ async def add_advertisement(
 
 @router.delete('')
 async def delete_advertisement_on_cart(
+    advertisement_id: int,
     carts_repository: CartsRepository = Depends(),
     user_data: UserResponse = Depends(auth_client.verify_token)
-):
+) -> dict:
     
     return await carts_repository.delete(
-        ...
+        user_id=user_data["id"],
+        advertisement_id=advertisement_id
     )
 

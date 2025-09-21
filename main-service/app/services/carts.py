@@ -1,9 +1,10 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, update, delete, func
-# from sqlalchemy.orm import selectinload
+from sqlalchemy.orm import selectinload
+from typing import List
 from fastapi import HTTPException, status
 
-from models import CartsModel, CartsAdvertisementsModel
+from models import CartsModel, CartsAdvertisementsModel, AdvertisementsModel
 
 
 
@@ -37,25 +38,32 @@ class CartsService:
         
         return None
 
-    # async def get_cart_by_user_id(
-    #     self,
-    #     user_id: int
-    # ) -> CartsModel:
-        
-    #     current_cart = await self.session.execute(
-    #         select(CartsModel)
-    #         .where(CartsModel.user_id==user_id)
-    #     )
 
-    #     result = current_cart.scalar_one_or_none()
-
-    #     if result:
-    #         raise HTTPException(
-    #             status_code=status.HTTP_400_BAD_REQUEST,
-    #             detail="You already have a cart"
-    #         )
+    async def get_cart_by_user_id(
+        self,
+        user_id: int
+    ) -> List[AdvertisementsModel]:
         
-    #     return None
+        cart_exists = await self.session.execute(
+            select(CartsModel.id).where(CartsModel.user_id == user_id)
+        )
+        
+        if not cart_exists.scalar_one_or_none():
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="You don't have a cart"
+            )
+             
+        current_cart = await self.session.execute(
+            select(AdvertisementsModel)
+            .join(AdvertisementsModel.carts_advertisements)
+            .join(CartsAdvertisementsModel.cart)
+            .where(CartsModel.user_id==user_id)
+        )
+
+        advertisements  = current_cart.scalars().all()
+    
+        return advertisements
         
 
 
@@ -125,7 +133,7 @@ class CartsService:
         if current_cart is None:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
-                detail="You already have a cart"
+                detail="You don't have a cart"
             )
 
         existing_advertisement = await self.session.execute(

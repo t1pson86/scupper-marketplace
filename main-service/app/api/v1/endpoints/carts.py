@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends
+from typing import List
 
-from schemas import CartsResponse, UserResponse, AssociativeResponse
+from schemas import CartsResponse, UserResponse, AssociativeResponse, CartItemSimpleResponse
 from clients import auth_client
 from repositories import CartsRepository
 
@@ -19,12 +20,12 @@ async def create_cart(
 
 
 @router.get('')
-async def get_cart(
+async def get_advertisements_on_cart(
     carts_repository: CartsRepository = Depends(),
     user_data: UserResponse = Depends(auth_client.verify_token),
-) -> CartsResponse:
+) -> List[CartItemSimpleResponse]:
     
-    return await carts_repository.create(
+    return await carts_repository.read(
         user_id=user_data["id"]
     )
 

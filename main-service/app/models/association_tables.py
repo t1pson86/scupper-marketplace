@@ -12,5 +12,5 @@ class CartsAdvertisementsModel(Base):
     advertisement_id: Mapped[int] = mapped_column(ForeignKey('advertisements.id'), primary_key=True, nullable=False)
     added_at: Mapped[datetime] = mapped_column(default=datetime.utcnow)
 
-    cart: Mapped["CartsModel"] = relationship(back_populates="carts_advertisements")
-    advertisement: Mapped["AdvertisementsModel"] = relationship(back_populates="carts_advertisements")
+    cart: Mapped["CartsModel"] = relationship(back_populates="carts_advertisements", lazy="selectin")
+    advertisement: Mapped["AdvertisementsModel"] = relationship(back_populates="carts_advertisements", lazy="selectin")

@@ -1,10 +1,11 @@
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
+from typing import List
 
 from .base_repository import BaseRepository
 from database import get_new_async_session
 from services import CartsService
-from schemas import CartsResponse, AssociativeResponse
+from schemas import CartsResponse, AssociativeResponse, CartItemSimpleResponse
 
 
 class CartsRepository(BaseRepository[CartsResponse]):
@@ -26,10 +27,13 @@ class CartsRepository(BaseRepository[CartsResponse]):
     
 
     async def read(
-        self
-    ):
+        self,
+        user_id: int
+    ) -> List[CartItemSimpleResponse]:
         
-        pass
+        return await self.carts_service.get_cart_by_user_id(
+            user_id=user_id
+        )
         
 
     async def update(

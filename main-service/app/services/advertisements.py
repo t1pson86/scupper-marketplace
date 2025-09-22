@@ -152,3 +152,39 @@ class AdvertisementsService:
         await self.session.commit()
 
         return None
+    
+
+    async def buy_a_advertisement(
+        self,
+        advertisement_id: str,
+        user_id: int
+    ) -> int:
+        
+        current_advertisement = await self.session.execute(
+            select(AdvertisementsModel)
+            .where(AdvertisementsModel.uniq_id==advertisement_id)
+        )
+
+        result = current_advertisement.scalar_one_or_none()
+
+        if result is None:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="This advertisement not found"
+            )
+
+        if result.creator_id == user_id:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="You can't buy your product."
+            )
+        
+        creator_id = result.creator_id
+        
+        await self.session.delete(result)
+        await self.session.commit()
+
+        return creator_id
+        
+
+    

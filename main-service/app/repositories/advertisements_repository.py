@@ -75,3 +75,15 @@ class AdvertisementRepository(BaseRepository[AdvertisementCreate]):
             skip=skip, 
             limit=limit
         )
+    
+
+    async def buy_a_advertisement(
+        self,
+        advertisement_id: str,
+        user_id: int
+    ) -> int:
+        
+        return await self.advertisements_service.buy_a_advertisement(
+            advertisement_id=advertisement_id,
+            user_id=user_id
+        )

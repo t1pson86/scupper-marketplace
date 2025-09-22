@@ -4,7 +4,6 @@ from models import CategoryEnum
 from typing import Optional, List
 from .reviews import ReviewResponse
 
-
 class AdvertisementCreate(BaseModel):
     name: str
     description: str
@@ -49,4 +48,3 @@ class AdvertisementReviewResponse(BaseModel):
     category: str
     creator_id: int
     reviews: List[ReviewResponse]
-

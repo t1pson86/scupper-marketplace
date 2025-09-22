@@ -1,5 +1,6 @@
 from datetime import datetime
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy import BigInteger
 
 from database import Base
 
@@ -11,7 +12,7 @@ class UsersModel(Base):
     username: Mapped[str] = mapped_column(nullable=False, unique=True)
     email: Mapped[str] = mapped_column(nullable=False, unique=True)
     telegram_username: Mapped[str] = mapped_column(nullable=False, unique=True)
-    telegram_id: Mapped[int] = mapped_column(nullable=False, unique=True)
+    telegram_id: Mapped[int] = mapped_column(BigInteger, nullable=False, unique=True)
     hashed_password: Mapped[str] = mapped_column(nullable=False)
 
     is_active: Mapped[bool] = mapped_column(nullable=False, default=True)

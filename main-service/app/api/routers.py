@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from .v1.endpoints import advertisement, reviews, carts
+from .v1.endpoints import advertisement, reviews, carts, purchases
 
 router = APIRouter(
     prefix="/api/v1"
@@ -34,4 +34,16 @@ router.include_router(
     router=carts.router,
     tags=["Main Service Carts"],
     prefix='/carts'
+)
+
+router.include_router(
+    router=purchases.router,
+    tags=["Main Service Purchases"],
+    prefix='/purchases'
+)
+
+router.include_router(
+    router=purchases.rabbit_router,
+    tags=["Main Service Purchases RabbitMQ"],
+    prefix='/reviews'
 )

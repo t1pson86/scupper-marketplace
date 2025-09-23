@@ -6,6 +6,7 @@ from faststream.rabbit.fastapi import RabbitRouter
 from clients import auth_client
 from schemas import AdvertisementCreate, AdvertisementReviewResponse, AdvertisementResponse, UserResponse, PaginatedResponse, AdvertisementPaginationResponse, AdvertisementUpdate
 from repositories import AdvertisementRepository
+from ...dependencies import Rate_Limiter
 
 router = APIRouter()
 
@@ -16,6 +17,7 @@ rabbit_router = RabbitRouter()
 async def create_advertisement(
     advertisement: AdvertisementCreate,
     user_data: UserResponse = Depends(auth_client.verify_token),
+    is_rate_limited: None = Depends(Rate_Limiter(rate_limit=5)),
     advertisements_repository: AdvertisementRepository = Depends()
 ) -> AdvertisementResponse:
     
